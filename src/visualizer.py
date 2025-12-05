@@ -73,8 +73,15 @@ def generate_plots():
         plt.savefig(os.path.join(PLOT_DIR, f"rent_distribution_{datetime.now().date()}.png"))
         print("Saved Price Distribution Plot.")
     
+    # --- PLOT 3: Total Count by Room Number (Available vs Occupied) ---
+    plt.figure(figsize=(10, 6))
+    sns.countplot(data=df, x='Rooms', hue='Status', palette={'Available': '#2ecc71', 'Occupied': '#e74c3c'})
+    plt.title('Total Number of Apartments by Room Count')
+    plt.ylabel('Count')
+    plt.savefig(os.path.join(PLOT_DIR, f"room_counts_{datetime.now().date()}.png"))
+    print("Saved Room Count Plot.")
+
     plt.close('all')
 
 if __name__ == "__main__":
     generate_plots()
-    
