@@ -46,7 +46,11 @@ def generate_plots():
 
     # --- PLOT 2: Price Distribution (Swarm Plot) ---
     # Only useful if we have available units
-    available_df = df[df['Status'] == 'Available']
+    # Only show *most recent* available apartments in the dot plot. Otherwise after 10 weeks the swarm plot will sho
+    # 10 dots for the same apartment. Only applies to "Status" charts (Swarm/Box-plot) because in the "Trend" charts
+    # we want explicitly to use all history.
+    latest_date = df['Date_Checked'].max() 
+    available_df = df[(df['Status'] == 'Available') & (df['Date_Checked'] == latest_date)]
     
     if not available_df.empty:
         plt.figure(figsize=(10, 6))
