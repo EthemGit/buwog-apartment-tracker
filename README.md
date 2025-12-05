@@ -69,7 +69,7 @@ The project includes a `run_weekly_template.bat` file.
 2. Set up Windows Task Scheduler to run this batch file weekly.
 
 ## 📂 Project Structure
-
+```text
 buwog-apartment-tracker/
 ├── assets/ # Images for README
 ├── data/ # CSV Data storage (Time-series)
@@ -80,6 +80,6 @@ buwog-apartment-tracker/
 ├── .gitignore # Git ignore rules
 ├── requirements.txt # Python dependencies
 └── README.md # Documentation
-
+```
 ## ⚖️ Disclaimer
 This tool is for educational and personal analysis purposes only. It accesses publicly available data. The frequency of requests is minimal (once per week) to ensure no load is placed on the host servers.
