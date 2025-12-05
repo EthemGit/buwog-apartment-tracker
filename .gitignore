@@ -1,5 +1,14 @@
-venv/
+# Python internals
 __pycache__/
-*.DS_Store
+*.py[cod]
+venv/
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# User specific scripts (Don't upload your personal paths!)
 run_weekly.bat
-data/
