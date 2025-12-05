@@ -71,15 +71,15 @@ The project includes a `run_weekly_template.bat` file.
 ## 📂 Project Structure
 ```text
 buwog-apartment-tracker/
-├── assets/ # Images for README
-├── data/ # CSV Data storage (Time-series)
-├── plots/ # Generated visualization images
-├── src/ # Source Code
-│ ├── scraper.py # ETL Logic (Extract & Transform)
-│ └── visualizer.py # Data Analysis & Plotting
-├── .gitignore # Git ignore rules
-├── requirements.txt # Python dependencies
-└── README.md # Documentation
+├── assets/             # Images for README
+├── data/               # CSV Data storage (Time-series)
+├── plots/              # Generated visualization images
+├── src/                # Source Code
+│ ├── scraper.py        # ETL Logic (Extract & Transform)
+│ └── visualizer.py     # Data Analysis & Plotting
+├── .gitignore
+├── requirements.txt    # Python dependencies
+└── README.md           # Documentation
 ```
 ## ⚖️ Disclaimer
 This tool is for educational and personal analysis purposes only. It accesses publicly available data. The frequency of requests is minimal (once per week) to ensure no load is placed on the host servers.
