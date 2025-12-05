@@ -22,7 +22,7 @@ def generate_plots():
     if not os.path.exists(PLOT_DIR):
         os.makedirs(PLOT_DIR)
 
-    # Set Style
+    # Set Global Style
     sns.set_theme(style="whitegrid")
     
     # --- PLOT 1: Occupancy Over Time ---
@@ -32,27 +32,44 @@ def generate_plots():
     occupancy = df.groupby(['Date_Checked', 'Status']).size().unstack(fill_value=0)
     
     if 'Available' in occupancy.columns:
-        sns.lineplot(data=occupancy, x=occupancy.index, y='Available', marker='o', label='Available Units', color='green')
+        sns.lineplot(data=occupancy, x=occupancy.index, y='Available', marker='o', label='Available Units', color='#2ecc71', linewidth=2.5)
     if 'Occupied' in occupancy.columns:
-        sns.lineplot(data=occupancy, x=occupancy.index, y='Occupied', marker='o', label='Rented Units', color='red')
+        sns.lineplot(data=occupancy, x=occupancy.index, y='Occupied', marker='o', label='Rented Units', color='#e74c3c', linewidth=2.5)
         
-    plt.title('Apartment Availability Over Time')
+    plt.title('Apartment Availability Over Time', fontsize=14)
     plt.ylabel('Number of Apartments')
-    plt.xlabel('Date')
+    plt.xlabel('') # Date is obvious, empty label is cleaner
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig(os.path.join(PLOT_DIR, f"occupancy_trend_{datetime.now().date()}.png"))
     print("Saved Occupancy Plot.")
 
-    # --- PLOT 2: Price Distribution (Available Units) ---
+    # --- PLOT 2: Price Distribution (Swarm Plot) ---
     # Only useful if we have available units
     available_df = df[df['Status'] == 'Available']
     
     if not available_df.empty:
         plt.figure(figsize=(10, 6))
-        sns.boxplot(data=available_df, x='Rooms', y='Total_Rent')
-        plt.title('Rent Price Distribution by Room Count')
+        
+        # Swarmplot: Draws a dot for every apartment.
+        # hue='Floor': Colors the dots based on which floor they are on.
+        sns.swarmplot(
+            data=available_df, 
+            x='Rooms', 
+            y='Total_Rent', 
+            hue='Floor',      # Color coded by floor
+            size=7,           # Size of the dots
+            palette='viridis' # Color scheme
+        )
+        
+        plt.title('Current Rent Prices (Every Dot is an Apartment)', fontsize=14)
         plt.ylabel('Total Rent (€)')
+        plt.xlabel('Number of Rooms')
+        
+        # Move the legend outside the plot so it doesn't cover dots
+        plt.legend(title='Floor', bbox_to_anchor=(1.05, 1), loc='upper left')
+        
+        plt.tight_layout()
         plt.savefig(os.path.join(PLOT_DIR, f"rent_distribution_{datetime.now().date()}.png"))
         print("Saved Price Distribution Plot.")
     
