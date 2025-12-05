@@ -81,6 +81,39 @@ def generate_plots():
     plt.savefig(os.path.join(PLOT_DIR, f"room_counts_{datetime.now().date()}.png"))
     print("Saved Room Count Plot.")
 
+    # --- PLOT 4: Average Rent Evolution Over Time ---
+    # Filter only available apartments
+    available_df = df[df['Status'] == 'Available']
+
+    if not available_df.empty:
+        plt.figure(figsize=(10, 6))
+        
+        # Calculate average rent per date and room count
+        # reset_index() flattens the table so seaborn can use it easily
+        avg_rent_history = available_df.groupby(['Date_Checked', 'Rooms'])['Total_Rent'].mean().reset_index()
+        
+        # Plot lines
+        # hue='Rooms' creates a separate colored line for 2 Zimmer, 3 Zimmer, etc.
+        sns.lineplot(
+            data=avg_rent_history, 
+            x='Date_Checked', 
+            y='Total_Rent', 
+            hue='Rooms', 
+            marker='o', 
+            palette='tab10',
+            linewidth=2.5
+        )
+        
+        plt.title('Average Rent Price Evolution')
+        plt.ylabel('Average Total Rent (€)')
+        plt.xlabel('Date')
+        plt.legend(title='Room Count')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        
+        plt.savefig(os.path.join(PLOT_DIR, f"avg_rent_history_{datetime.now().date()}.png"))
+        print("Saved Average Rent History Plot.")
+
     plt.close('all')
 
 if __name__ == "__main__":
