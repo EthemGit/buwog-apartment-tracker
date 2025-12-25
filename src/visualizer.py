@@ -77,13 +77,64 @@ def generate_plots():
         plt.savefig(os.path.join(PLOT_DIR, f"rent_distribution_{datetime.now().date()}.png"))
         print("Saved Price Distribution Plot.")
     
-    # --- PLOT 3: Total Count by Room Number (Available vs Occupied) ---
-    plt.figure(figsize=(10, 6))
-    sns.countplot(data=df, x='Rooms', hue='Status', palette={'Available': '#2ecc71', 'Occupied': '#e74c3c'})
-    plt.title('Total Number of Apartments by Room Count')
-    plt.ylabel('Count')
-    plt.savefig(os.path.join(PLOT_DIR, f"room_counts_{datetime.now().date()}.png"))
-    print("Saved Room Count Plot.")
+    # --- PLOT 3: Total Count by Room Number (With Delta Annotations) ---
+    # Get the two most recent dates
+    sorted_dates = sorted(df['Date_Checked'].unique())
+    
+    if len(sorted_dates) >= 1:
+        latest_date = sorted_dates[-1]
+        
+        # Filter for latest data
+        latest_df = df[df['Date_Checked'] == latest_date]
+        
+        plt.figure(figsize=(12, 7))
+        ax = sns.countplot(data=latest_df, x='Rooms', hue='Status', 
+                           palette={'Available': '#2ecc71', 'Occupied': '#e74c3c'})
+        
+        plt.title(f'Total Apartments by Room Count (As of {latest_date.date()})', fontsize=14)
+        plt.ylabel('Count')
+        
+        # --- LOGIC FOR DELTA (+2/-1) ANNOTATION ---
+        if len(sorted_dates) >= 2:
+            prev_date = sorted_dates[-2]
+            prev_df = df[df['Date_Checked'] == prev_date]
+            
+            # Calculate counts for current and previous
+            curr_counts = latest_df.groupby(['Rooms', 'Status']).size()
+            prev_counts = prev_df.groupby(['Rooms', 'Status']).size()
+            
+            # Iterate over the bars to add text
+            for p in ax.patches:
+                # We need to guess which category (Rooms/Status) this bar belongs to based on geometry
+                # This is tricky in Seaborn, but we can do a coordinate match or simpler:
+                # Just calculate the differences and print them as a subtitle or legend for clarity.
+                pass
+            
+            # A cleaner way than hacking bar coordinates: 
+            # Print a text summary box on the chart
+            summary_text = "Changes since last run:\n"
+            
+            # Check 2, 3, 4 rooms
+            for r in sorted(latest_df['Rooms'].unique()):
+                for s in ['Available', 'Occupied']:
+                    try:
+                        c = curr_counts.get((r, s), 0)
+                        p = prev_counts.get((r, s), 0)
+                        diff = c - p
+                        if diff != 0:
+                            sign = "+" if diff > 0 else ""
+                            summary_text += f"{r} Rooms ({s}): {c} ({sign}{diff})\n"
+                    except:
+                        pass
+            
+            # Add text box to the plot
+            plt.text(0.02, 0.95, summary_text, transform=plt.gca().transAxes, 
+                     fontsize=10, verticalalignment='top', 
+                     bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+
+        plt.tight_layout()
+        plt.savefig(os.path.join(PLOT_DIR, f"room_counts_delta_{datetime.now().date()}.png"))
+        print("Saved Room Count Delta Plot.")
 
     # --- PLOT 4: Average Rent Evolution Over Time ---
     # Filter only available apartments
