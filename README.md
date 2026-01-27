@@ -13,6 +13,7 @@ This tool monitors the housing market for specific real estate developments. It 
 2.  **Transforms** unstructured HTML into structured historical datasets.
 3.  **Loads** the data into a CSV-based time-series database.
 4.  **Visualizes** trends in rent prices and occupancy using Seaborn & Matplotlib.
+5.  **Reports** detailed changes (new rentals, price adjustments) compared to the previous run.
 
 It is designed to run autonomously via Windows Task Scheduler or Cron.
 
@@ -59,6 +60,7 @@ To trigger an immediate update of the data and plots:
 ```bash
 python src/scraper.py
 python src/visualizer.py
+python src/reporter.py
 ```
 
 ## Automation (Windows)
@@ -67,19 +69,22 @@ The project includes a `run_weekly_template.bat` file.
 
 1. Edit the file to match your project path.
 2. Set up Windows Task Scheduler to run this batch file weekly.
+3. Ensure "Run whether user is logged on or not" is checked for background execution.
 
 ## 📂 Project Structure
 ```text
 buwog-apartment-tracker/
-├── assets/             # Images for README
-├── data/               # CSV Data storage (Time-series)
-├── plots/              # Generated visualization images
-├── src/                # Source Code
-│ ├── scraper.py        # ETL Logic (Extract & Transform)
-│ └── visualizer.py     # Data Analysis & Plotting
-├── .gitignore
-├── requirements.txt    # Python dependencies
-└── README.md           # Documentation
+├── assets/              # Images for README
+├── data/                # CSV Data storage (Time-series)
+├── plots/               # Generated visualization images (Trends)
+├── reports/             # Generated report tables (Weekly changes)
+├── src/                 
+│   ├── scraper.py       # ETL Logic (Extract & Transform)
+│   ├── visualizer.py    # Data Analysis & Plotting
+│   └── reporter.py      # Detailed Change Detection Logic
+├── .gitignore           
+├── requirements.txt     # Python dependencies
+└── README.md            
 ```
 ## ⚖️ Disclaimer
 This tool is for educational and personal analysis purposes only. It accesses publicly available data. The frequency of requests is minimal (once per week) to ensure no load is placed on the host servers.
