@@ -46,19 +46,42 @@ def fetch_data():
 
 def process_data(df):
     """Cleans and adds timestamp to the data."""
-    # Add Timestamp
     df['Date_Checked'] = datetime.now().strftime("%Y-%m-%d")
     
-    # Determine Status
-    df['Status'] = df['Gesamtmiete'].apply(lambda x: 'Occupied' if 'vermietet' in str(x).lower() else 'Available')
+    # Safety check: ensure column exists
+    if 'Gesamtmiete' not in df.columns:
+        print("Error: Column 'Gesamtmiete' not found. Scraper needs update.")
+        return None
+
+    # --- NEW STATUS LOGIC ---
+    def get_status(value):
+        text = str(value).lower()
+        if 'vermietet' in text:
+            return 'Occupied'
+        elif 'reserviert' in text:
+            return 'Reserved'  # <--- NEW STATUS
+        else:
+            return 'Available'
+
+    df['Status'] = df['Gesamtmiete'].apply(get_status)
     
     # Clean Numerical Columns
     df['Grundmiete_Num'] = df['Grundmiete'].apply(clean_currency)
     df['Gesamtmiete_Num'] = df['Gesamtmiete'].apply(clean_currency)
-    df['Area_m2'] = df['ca. Fläche'].astype(str).str.replace(' m2', '').str.replace(',', '.').astype(float)
     
-    # Select and rename columns for clarity
+    # Clean Area
+    if 'ca. Fläche' in df.columns:
+        df['Area_m2'] = df['ca. Fläche'].astype(str).str.replace(' m2', '').str.replace(',', '.').astype(float)
+    else:
+        df['Area_m2'] = 0.0
+    
+    # Select and rename columns
     cols = ['Date_Checked', 'Whg.-Nr.', 'Zi.', 'Area_m2', 'Etage', 'Status', 'Grundmiete_Num', 'Gesamtmiete_Num']
+    
+    for c in cols:
+        if c not in df.columns:
+            df[c] = None
+
     final_df = df[cols].rename(columns={
         'Whg.-Nr.': 'Apartment_ID',
         'Zi.': 'Rooms',
