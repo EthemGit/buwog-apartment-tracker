@@ -91,6 +91,36 @@ def generate_plots():
         plt.tight_layout()
         plt.savefig(os.path.join(PLOT_DIR, f"room_counts_{datetime.now().date()}.png"))
         print("Saved Room Count Plot.")
+
+    # --- PLOT 4: Average Rent Evolution Over Time (RESTORED) ---
+    # Filter only available apartments
+    history_available = df[df['Status'] == 'Available']
+
+    if not history_available.empty:
+        plt.figure(figsize=(10, 6))
+        
+        # Calculate average rent per date and room count
+        avg_rent_history = history_available.groupby(['Date_Checked', 'Rooms'])['Total_Rent'].mean().reset_index()
+        
+        sns.lineplot(
+            data=avg_rent_history, 
+            x='Date_Checked', 
+            y='Total_Rent', 
+            hue='Rooms', 
+            marker='o', 
+            palette='tab10',
+            linewidth=2.5
+        )
+        
+        plt.title('Average Rent Price Evolution')
+        plt.ylabel('Average Total Rent (€)')
+        plt.xlabel('Date')
+        plt.legend(title='Room Count')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        
+        plt.savefig(os.path.join(PLOT_DIR, f"avg_rent_history_{datetime.now().date()}.png"))
+        print("Saved Average Rent History Plot.")
     
     plt.close('all')
 
